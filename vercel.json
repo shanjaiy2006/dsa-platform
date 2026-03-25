@@ -1,0 +1,15 @@
+{
+  "buildCommand": "prisma generate && next build",
+  "devCommand": "next dev",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "outputDirectory": ".next",
+  "regions": ["iad1"],
+  "env": {
+    "DATABASE_URL": "@database_url",
+    "JWT_SECRET": "@jwt_secret",
+    "ANTHROPIC_API_KEY": "@anthropic_api_key",
+    "JUDGE0_API_URL": "@judge0_api_url",
+    "JUDGE0_API_KEY": "@judge0_api_key"
+  }
+}

@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 98%;
+    --foreground: 222 47% 8%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 8%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 8%;
+    --primary: 239 84% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 14% 94%;
+    --secondary-foreground: 222 47% 20%;
+    --muted: 220 14% 94%;
+    --muted-foreground: 215 16% 46%;
+    --accent: 220 14% 92%;
+    --accent-foreground: 222 47% 15%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 13% 88%;
+    --input: 220 13% 88%;
+    --ring: 239 84% 60%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 222 47% 4%;
+    --foreground: 213 31% 91%;
+    --card: 222 47% 6%;
+    --card-foreground: 213 31% 91%;
+    --popover: 222 47% 6%;
+    --popover-foreground: 213 31% 91%;
+    --primary: 239 84% 67%;
+    --primary-foreground: 222 47% 8%;
+    --secondary: 222 47% 10%;
+    --secondary-foreground: 210 40% 90%;
+    --muted: 222 47% 10%;
+    --muted-foreground: 215 16% 57%;
+    --accent: 222 47% 12%;
+    --accent-foreground: 210 40% 95%;
+    --destructive: 0 63% 40%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 222 47% 14%;
+    --input: 222 47% 14%;
+    --ring: 239 84% 67%;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  body { @apply bg-background text-foreground; font-feature-settings: 'rlig' 1, 'calt' 1; }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { @apply bg-border rounded-full; }
+::-webkit-scrollbar-thumb:hover { @apply bg-muted-foreground/30; }
+
+/* Utilities */
+.glass { @apply bg-card/80 backdrop-blur-xl border border-border/50; }
+.gradient-text { @apply bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500; }
+
+.shimmer {
+  background: linear-gradient(90deg, hsl(var(--muted)) 25%, hsl(var(--accent)) 50%, hsl(var(--muted)) 75%);
+  background-size: 200% 100%;
+  @apply animate-shimmer rounded-xl;
+}
+
+/* Difficulty badges */
+.difficulty-easy { @apply bg-emerald-500/10 text-emerald-600 border-emerald-500/20 dark:text-emerald-400; }
+.difficulty-medium { @apply bg-amber-500/10 text-amber-600 border-amber-500/20 dark:text-amber-400; }
+.difficulty-hard { @apply bg-red-500/10 text-red-600 border-red-500/20 dark:text-red-400; }
+
+/* Heatmap */
+.heatmap-cell { @apply rounded-sm transition-all duration-200 cursor-pointer hover:scale-125 hover:z-10; }
+
+/* Pattern card hover glow */
+.pattern-glow { transition: box-shadow 0.3s ease; }
+.pattern-glow:hover { box-shadow: 0 0 30px -8px var(--pattern-color, rgba(99,102,241,0.4)); }

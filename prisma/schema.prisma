@@ -1,0 +1,213 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String
+  password      String?
+  image         String?
+  role          Role      @default(USER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Stats
+  streak        Int       @default(0)
+  lastSolvedAt  DateTime?
+  totalXP       Int       @default(0)
+
+  // Relations
+  progress      UserProgress[]
+  submissions   Submission[]
+  notes         Note[]
+  bookmarks     Bookmark[]
+  sessions      Session[]
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model Pattern {
+  id              String    @id @default(cuid())
+  slug            String    @unique
+  name            String
+  description     String
+  difficulty      Difficulty
+  order           Int
+  icon            String
+  color           String
+
+  // Content
+  conceptExplanation  String  @db.Text
+  visualIntuition     String  @db.Text
+  stepByStep          String  @db.Text
+  templateCode        Json    // { java: string, python: string, cpp: string }
+  commonMistakes      String  @db.Text
+  interviewInsights   String  @db.Text
+  timeComplexity      String
+  spaceComplexity     String
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations
+  problems        Problem[]
+  userProgress    UserProgress[]
+
+  @@map("patterns")
+}
+
+model Problem {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  title       String
+  description String    @db.Text
+  difficulty  Difficulty
+  patternId   String
+  order       Int
+  companies   String[]
+  tags        String[]
+
+  // Problem content
+  examples    Json      // [{ input: string, output: string, explanation: string }]
+  constraints String[]
+  hints       String[]
+
+  // Solution
+  editorialCode   Json?   // { java: string, python: string, cpp: string }
+  editorialText   String? @db.Text
+
+  // Stats
+  solvedCount     Int     @default(0)
+  attemptCount    Int     @default(0)
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  pattern     Pattern   @relation(fields: [patternId], references: [id])
+  submissions Submission[]
+  notes       Note[]
+  bookmarks   Bookmark[]
+
+  @@map("problems")
+}
+
+model UserProgress {
+  id          String    @id @default(cuid())
+  userId      String
+  patternId   String
+  masteryLevel Int      @default(0) // 0-100
+  solvedCount Int       @default(0)
+  totalCount  Int       @default(0)
+  lastPracticed DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pattern Pattern @relation(fields: [patternId], references: [id])
+
+  @@unique([userId, patternId])
+  @@map("user_progress")
+}
+
+model Submission {
+  id          String    @id @default(cuid())
+  userId      String
+  problemId   String
+  code        String    @db.Text
+  language    Language
+  status      SubmissionStatus
+  runtime     Int?      // ms
+  memory      Int?      // KB
+  output      String?   @db.Text
+  errorMsg    String?   @db.Text
+  createdAt   DateTime  @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problem Problem @relation(fields: [problemId], references: [id])
+
+  @@map("submissions")
+}
+
+model Note {
+  id        String    @id @default(cuid())
+  userId    String
+  problemId String?
+  patternId String?
+  title     String
+  content   String    @db.Text
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problem Problem? @relation(fields: [problemId], references: [id])
+
+  @@map("notes")
+}
+
+model Bookmark {
+  id        String    @id @default(cuid())
+  userId    String
+  problemId String
+  createdAt DateTime  @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  problem Problem @relation(fields: [problemId], references: [id])
+
+  @@unique([userId, problemId])
+  @@map("bookmarks")
+}
+
+model DailyChallenge {
+  id        String    @id @default(cuid())
+  problemId String
+  date      DateTime  @db.Date
+  createdAt DateTime  @default(now())
+
+  @@unique([date])
+  @@map("daily_challenges")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum Language {
+  JAVA
+  PYTHON
+  CPP
+}
+
+enum SubmissionStatus {
+  ACCEPTED
+  WRONG_ANSWER
+  TIME_LIMIT_EXCEEDED
+  RUNTIME_ERROR
+  COMPILE_ERROR
+  PENDING
+}
