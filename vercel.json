@@ -4,12 +4,5 @@
   "installCommand": "npm install",
   "framework": "nextjs",
   "outputDirectory": ".next",
-  "regions": ["iad1"],
-  "env": {
-    "DATABASE_URL": "postgresql://neondb_owner:npg_1SI4KezoDsmr@ep-nameless-cell-anig9ql5-pooler.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require",
-    "JWT_SECRET": "@jwt_secret",
-    "ANTHROPIC_API_KEY": "@anthropic_api_key",
-    "JUDGE0_API_URL": "@judge0_api_url",
-    "JUDGE0_API_KEY": "@judge0_api_key"
-  }
+  "regions": ["iad1"]
 }
